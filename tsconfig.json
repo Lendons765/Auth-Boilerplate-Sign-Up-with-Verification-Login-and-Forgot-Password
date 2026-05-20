@@ -2,7 +2,7 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "baseUrl": "./",
+        "baseUrl": "dist/angular-15-example",
         "outDir": "./dist/out-tsc",
         "allowSyntheticDefaultImports": true,
         "forceConsistentCasingInFileNames": true,
