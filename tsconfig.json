@@ -18,7 +18,7 @@
         "moduleResolution": "bundler",
         "importHelpers": true,
         "rootDir": "src",
-        "target": "ES2022",
+        "target": "es2020",
         "module": "es2020",
         "lib": [
             "es2020",
