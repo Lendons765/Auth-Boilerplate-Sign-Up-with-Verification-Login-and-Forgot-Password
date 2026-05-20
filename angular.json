@@ -25,7 +25,8 @@
     "inlineStyleLanguage": "less",
     "assets": [
     "src/favicon.ico",
-    "src/assets"
+    "src/assets",
+    "public"
     ],
     "styles": [
         "src/styles.less"
