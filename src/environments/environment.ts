@@ -4,7 +4,7 @@
 
 export const environment = {
     production: false,
-    apiUrl: 'https://manga-finalproject-backend.onrender.com'
+    apiUrl: 'http://localhost:4000'
 };
 
 /*
