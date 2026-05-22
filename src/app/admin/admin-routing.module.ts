@@ -12,7 +12,8 @@ const routes: Routes = [
     {
         path: '', component: LayoutComponent,
         children: [
-            { path: '', component: OverviewComponent },
+            // 🔓 CHANGE: Automatically redirect empty admin paths straight to accounts
+            { path: '', redirectTo: 'accounts', pathMatch: 'full' },
             { path: 'accounts', loadChildren: accountsModule }
         ]
     }

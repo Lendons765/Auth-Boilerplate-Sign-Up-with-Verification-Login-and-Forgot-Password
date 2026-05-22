@@ -23,9 +23,16 @@
                 </button>
             </td>
         </tr>
-        <tr *ngIf="!accounts">
+
+        <tr *ngIf="accounts === undefined || accounts === null">
             <td colspan="4" class="text-center">
                 <span class="spinner-border spinner-border-lg align-center"></span>
+            </td>
+        </tr>
+
+        <tr *ngIf="accounts && accounts.length === 0">
+            <td colspan="4" class="text-center p-4 text-muted">
+                No accounts registered in the database yet. Click "Create Account" above to add one!
             </td>
         </tr>
     </tbody>
