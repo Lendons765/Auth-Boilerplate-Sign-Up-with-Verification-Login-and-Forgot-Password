@@ -13,9 +13,11 @@ const routes: Routes = [
     { path: '', component: HomeComponent, canActivate: [AuthGuard] },
     { path: 'account', loadChildren: accountModule },
     { path: 'profile', loadChildren: profileModule, canActivate: [AuthGuard] },
-    { path: 'admin', loadChildren: adminModule, canActivate: [AuthGuard], data: { roles: [Role.Admin] } },
+    
+   
+    { path: 'admin', loadChildren: adminModule },
 
-    // otherwise redirect to home
+    
     { path: '**', redirectTo: '' }
 ];
 
@@ -24,4 +26,3 @@ const routes: Routes = [
     exports: [RouterModule]
 })
 export class AppRoutingModule { }
-
