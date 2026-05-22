@@ -12,8 +12,7 @@ const routes: Routes = [
     {
         path: '', component: LayoutComponent,
         children: [
-            // 🔑 FIXED: Changed from OverviewComponent to a direct redirect to 'accounts'
-            { path: '', redirectTo: 'accounts', pathMatch: 'full' },
+            { path: '', component: OverviewComponent },
             { path: 'accounts', loadChildren: accountsModule }
         ]
     }
