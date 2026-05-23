@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -12,7 +12,7 @@ enum TokenStatus {
     Invalid
 }
 
-@Component({ standalone: false, templateUrl: 'reset-password.component.html' })
+@Component({ templateUrl: 'reset-password.component.html', standalone: false })
 export class ResetPasswordComponent implements OnInit {
     TokenStatus = TokenStatus;
     tokenStatus = TokenStatus.Validating;
@@ -26,7 +26,8 @@ export class ResetPasswordComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private accountService: AccountService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private cd: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
@@ -42,14 +43,25 @@ export class ResetPasswordComponent implements OnInit {
         // remove token from url to prevent http referer leakage
         this.router.navigate([], { relativeTo: this.route, replaceUrl: true });
 
+        if (!token) {
+            // console.log('No reset token found.'); // Debug: no token in URL.
+            this.tokenStatus = TokenStatus.Invalid; // Shows invalid token message if no token is found.
+            return;
+        }
+
+        // Validate the reset token before showing the reset password form.
         this.accountService.validateResetToken(token)
             .pipe(first())
             .subscribe({
                 next: () => {
-                    this.token = token;
-                    this.tokenStatus = TokenStatus.Valid;
+                    // console.log('Reset token is valid.'); // Debug: token validation passed.
+                    this.token = token; 
+                    this.tokenStatus = TokenStatus.Valid; // Show the reset password form.
+
+                     this.cd.detectChanges(); // Force Angular to update the HTML view.
                 },
-                error: () => {
+                error: ()=> {
+                    //  console.log('Reset token validation error:', error); // Log the validation error for debugging.
                     this.tokenStatus = TokenStatus.Invalid;
                 }
             });
@@ -57,7 +69,7 @@ export class ResetPasswordComponent implements OnInit {
 
     // convenience getter for easy access to form fields
     get f() { return this.form.controls; }
-
+    
     onSubmit() {
         this.submitted = true;
 
