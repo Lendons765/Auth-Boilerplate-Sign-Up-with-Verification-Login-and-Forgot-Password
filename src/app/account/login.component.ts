@@ -10,6 +10,7 @@ export class LoginComponent implements OnInit {
     form!: FormGroup;
     submitting = false;
     submitted = false;
+    error = ''; // 🌟 Added to hold the text error message for the HTML template
 
     constructor(
         private formBuilder: FormBuilder,
@@ -32,6 +33,7 @@ export class LoginComponent implements OnInit {
 
     onSubmit() {
         this.submitted = true;
+        this.error = ''; // 🔄 Clear any previous error message on a new try
 
         // reset alerts on submit
         this.alertService.clear();
@@ -51,7 +53,12 @@ export class LoginComponent implements OnInit {
                     this.router.navigateByUrl(returnUrl);
                 },
                 error: error => {
-                    this.alertService.error(error);
+                    // 🌟 FIXED: Safely extract the inner backend message string 
+                    // (handles error.error.message, error.error, or fallback text)
+                    this.error = error.error?.message || error.error || error.message || 'An error occurred';
+                    
+                    // Keep your alert service backup call active
+                    this.alertService.error(this.error);
                     this.submitting = false;
                 }
             });

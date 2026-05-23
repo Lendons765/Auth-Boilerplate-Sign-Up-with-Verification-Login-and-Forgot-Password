@@ -20,6 +20,10 @@
                 </div>
             </div>
 
+            <div *ngIf="error" class="alert alert-danger mb-4" style="color: #ffffff; background-color: #dc3545; padding: 12px; margin-bottom: 20px; border-radius: 6px; font-size: 14px; border: 1px solid #c82333;">
+                <strong style="font-weight: 600;">Error:</strong> {{ error }}
+            </div>
+
             <form [formGroup]="form" (ngSubmit)="onSubmit()">
                 <div class="mb-4">
                     <label class="form-label">Email address</label>
