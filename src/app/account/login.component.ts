@@ -1,30 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
 import { AccountService, AlertService } from '@app/_services';
 
-@Component({ standalone: false, templateUrl: 'login.component.html' })
+@Component({ templateUrl: 'login.component.html', standalone: false })
 export class LoginComponent implements OnInit {
     form!: FormGroup;
     submitting = false;
-    submitted = false;
-    error = ''; // 🌟 Added to hold the text error message for the HTML template
+    submitted = false;  
 
     constructor(
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
         private accountService: AccountService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
         this.form = this.formBuilder.group({
             email: ['', [Validators.required, Validators.email]],
-            password: ['', Validators.required],
-            remember: [false]
+            password: ['', Validators.required]
         });
     }
 
@@ -33,33 +32,30 @@ export class LoginComponent implements OnInit {
 
     onSubmit() {
         this.submitted = true;
-        this.error = ''; // 🔄 Clear any previous error message on a new try
+        this.cdr.detectChanges();
 
-        // reset alerts on submit
         this.alertService.clear();
-
-        // stop here if form is invalid
+        
         if (this.form.invalid) {
             return;
         }
-
+        
         this.submitting = true;
+        this.cdr.detectChanges();
+
         this.accountService.login(this.f.email.value, this.f.password.value)
             .pipe(first())
             .subscribe({
                 next: () => {
-                    // get return url from query parameters or default to home page
                     const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
                     this.router.navigateByUrl(returnUrl);
                 },
                 error: error => {
-                    // 🌟 FIXED: Safely extract the inner backend message string 
-                    // (handles error.error.message, error.error, or fallback text)
-                    this.error = error.error?.message || error.error || error.message || 'An error occurred';
-                    
-                    // Keep your alert service backup call active
-                    this.alertService.error(this.error);
-                    this.submitting = false;
+                    setTimeout(() => {
+                        this.alertService.error(error);
+                        this.submitting = false;
+                        this.cdr.detectChanges();
+                    });
                 }
             });
     }
