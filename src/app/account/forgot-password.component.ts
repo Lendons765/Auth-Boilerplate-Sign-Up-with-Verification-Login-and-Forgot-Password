@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router'; // 🌟 FIXED: Imported Router utilities
 import { first, finalize } from 'rxjs/operators';
 
 import { AccountService, AlertService } from '@app/_services';
@@ -9,14 +10,16 @@ export class ForgotPasswordComponent implements OnInit {
     form!: FormGroup;
     loading = false;
     submitted = false;
-    error = ''; // 🌟 FIXED: Added property to capture backend errors locally for *ngIf="error"
+    error = ''; 
 
     constructor(
         private formBuilder: FormBuilder,
         private accountService: AccountService,
         private alertService: AlertService,
-        private cdr: ChangeDetectorRef // 🌟 Added to guarantee UI updates when state changes
-    ) {}
+        private router: Router,             
+        private route: ActivatedRoute,      
+        private cdr: ChangeDetectorRef       
+    ){}
 
     ngOnInit() {
         this.form = this.formBuilder.group({
@@ -29,7 +32,9 @@ export class ForgotPasswordComponent implements OnInit {
 
     onSubmit() {
         this.submitted = true;
-        this.error = ''; // Clear old errors on a fresh click
+        this.error = ''; 
+    
+        // reset alerts on submit
         this.alertService.clear();
     
         // stop here if form is invalid
@@ -38,23 +43,27 @@ export class ForgotPasswordComponent implements OnInit {
         }
     
         this.loading = true;
-        this.cdr.detectChanges();
+        this.cdr.detectChanges(); // Safe trigger after injection fixes
 
         this.accountService.forgotPassword(this.f.email.value)
             .pipe(
                 first(),
                 finalize(() => {
-                    this.loading = false; // 🌟 Forces spinner off no matter what
+                    this.loading = false;
                     this.cdr.detectChanges();
                 })
             )
             .subscribe({
                 next: () => {
-                    this.alertService.success('Please check your email for password reset instructions');
+                    // Triggers the top-level green banner tracking parameters
+                    this.alertService.success('Please check your email for password reset instructions', { keepAfterRouteChange: true });
+                    
+                    // Smooth routing backwards to login dashboard page state
+                    this.router.navigate(['../login'], { relativeTo: this.route });
                 },
                 error: error => {
                     setTimeout(() => {
-                        // 🌟 FIXED: Store the error string so your template error banner reveals itself!
+                        // Triggers the template-level local card message banner layout inside the view bounds
                         this.error = error; 
                         this.cdr.detectChanges();
                     });
