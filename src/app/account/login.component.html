@@ -24,7 +24,7 @@
                 <strong style="font-weight: 600;">Error:</strong> {{ error }}
             </div>
 
-            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()" (input)="error = ''">
                 <div class="mb-4">
                     <label class="form-label">Email address</label>
                     <input type="text" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />

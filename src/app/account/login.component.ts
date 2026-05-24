@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router'
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
 
@@ -10,7 +10,7 @@ export class LoginComponent implements OnInit {
     form!: FormGroup;
     submitting = false;
     submitted = false;  
-error: any;
+    error: any; // Connected directly to *ngIf="error" in your HTML template
 
     constructor(
         private formBuilder: FormBuilder,
@@ -28,15 +28,13 @@ error: any;
         });
     }
 
-    // convenience getter for easy access to form fields
     get f() { return this.form.controls; }
 
     onSubmit() {
         this.submitted = true;
-        this.error = ''; // 🌟 FIXED: Instantly wipes away old error text when clicking 'Sign in' again
+        this.error = ''; // Instantly wipes away old error text on a new click
         this.alertService.clear();
 
-        // stop here if form is invalid
         if (this.form.invalid) {
             return;
         }
@@ -53,9 +51,12 @@ error: any;
                 },
                 error: error => {
                     setTimeout(() => {
+                        // 🌟 FIXED: Store the error string so your *ngIf="error" block reveals itself!
+                        this.error = error; 
+                        
                         this.alertService.error(error);
-                        this.submitting = false;
-                        this.cdr.detectChanges();
+                        this.submitting = false; // Stops the spinner animation loop
+                        this.cdr.detectChanges(); // Forces UI update
                     });
                 }
             });
