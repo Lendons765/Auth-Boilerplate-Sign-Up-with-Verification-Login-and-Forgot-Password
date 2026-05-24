@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private accountService: AccountService,
-        private alertService: AlertService,
+        // private alertService: AlertService,
         private cdr: ChangeDetectorRef
     ) { }
 
@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
     onSubmit() {
         this.submitted = true;
         this.error = ''; // Instantly wipes away old error text on a new click
-        this.alertService.clear();
+        
 
         if (this.form.invalid) {
             return;
@@ -54,7 +54,6 @@ export class LoginComponent implements OnInit {
                         // 🌟 FIXED: Store the error string so your *ngIf="error" block reveals itself!
                         this.error = error; 
                         
-                        this.alertService.error(error);
                         this.submitting = false; // Stops the spinner animation loop
                         this.cdr.detectChanges(); // Forces UI update
                     });
