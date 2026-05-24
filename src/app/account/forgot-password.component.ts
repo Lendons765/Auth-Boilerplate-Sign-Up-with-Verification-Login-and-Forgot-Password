@@ -58,7 +58,6 @@ export class ForgotPasswordComponent implements OnInit {
                     // Triggers the top-level green banner tracking parameters
                     this.alertService.success('Please check your email for password reset instructions', { keepAfterRouteChange: true });
                     
-                    // Smooth routing backwards to login dashboard page state
                     this.router.navigate(['../login'], { relativeTo: this.route });
                 },
                 error: error => {
