@@ -10,6 +10,7 @@ export class LoginComponent implements OnInit {
     form!: FormGroup;
     submitting = false;
     submitted = false;  
+error: any;
 
     constructor(
         private formBuilder: FormBuilder,
