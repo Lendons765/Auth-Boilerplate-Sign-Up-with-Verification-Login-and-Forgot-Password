@@ -33,14 +33,14 @@ error: any;
 
     onSubmit() {
         this.submitted = true;
-        this.cdr.detectChanges();
-
+        this.error = ''; // 🌟 FIXED: Instantly wipes away old error text when clicking 'Sign in' again
         this.alertService.clear();
-        
+
+        // stop here if form is invalid
         if (this.form.invalid) {
             return;
         }
-        
+
         this.submitting = true;
         this.cdr.detectChanges();
 
