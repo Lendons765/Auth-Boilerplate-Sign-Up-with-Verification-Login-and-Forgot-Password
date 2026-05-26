@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { first } from 'rxjs/operators';
+import { first, finalize } from 'rxjs/operators'; // 🌟 Added finalize
 
 import { AccountService, AlertService } from '@app/_services';
 import { MustMatch } from '@app/_helpers';
@@ -28,7 +28,7 @@ export class RegisterComponent implements OnInit {
             email: ['', [Validators.required, Validators.email]],
             password: ['', [Validators.required, Validators.minLength(6)]],
             confirmPassword: ['', Validators.required],
-            acceptTerms: [false, Validators.requiredTrue]
+            acceptTerms: [false, Validators.requiredTrue] // Pure boolean initialization
         }, {
             validator: MustMatch('password', 'confirmPassword')
         });
@@ -50,15 +50,21 @@ export class RegisterComponent implements OnInit {
 
         this.submitting = true;
         this.accountService.register(this.form.value)
-            .pipe(first())
+            .pipe(
+                first(),
+                finalize(() => {
+                    // 🌟 THIS WILL ALWAYS RUN: Safely turns off the loading loop on any response
+                    this.submitting = false;
+                })
+            )
             .subscribe({
                 next: () => {
                     this.alertService.success('Registration successful, please check your email for verification instructions', { keepAfterRouteChange: true });
-                    this.router.navigate(['../login'], { relativeTo: this.route });
+                    // Use absolute navigation to avoid route relative context issues
+                    this.router.navigate(['/account/login']); 
                 },
                 error: error => {
                     this.alertService.error(error);
-                    this.submitting = false;
                 }
             });
     }
